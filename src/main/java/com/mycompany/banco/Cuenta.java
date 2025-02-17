@@ -9,7 +9,7 @@ import java.util.Objects;
  *
  * @author irene.rodrod.2
  */
-public class Cuenta implements Comparable {
+public class Cuenta implements Comparable<Cuenta>{
 
     private String codigo;
     private String titular;
@@ -17,7 +17,7 @@ public class Cuenta implements Comparable {
     List<Movimiento> movimientos;
 
     /*click derecho - insert code - constructor - hacer click y activar todas - finish */
- /*public class Cuenta implements Comparable{
+    /*public class Cuenta implements Comparable{
         this.codigo = codigo;
         this.titular = titular;
         if(saldo>0) {
@@ -25,9 +25,9 @@ public class Cuenta implements Comparable {
         }
     }*/
     public Cuenta(String codigo, String titular, float saldo) {
-        if (saldo > 0) {
+        if (saldo <= 0) {
             throw new IllegalArgumentException("El saldo inicial debe ser positivo");
-        }
+        }        
 
         this.codigo = codigo;
         this.titular = titular;
@@ -70,23 +70,25 @@ public class Cuenta implements Comparable {
     }
 
     public void ingresar(float cantidad) {
-        if (cantidad > 0) {
-            saldo += cantidad;
-            /*los atributos tienen otro color, y si se toca CTRL y se pone el ratón encima, lleva al enlace en el que se declaró la clase*/
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad a ingresar debe ser positiva");
         }
+        saldo += cantidad;
     }
+    
 
     public void reintegrar(float cantidad) throws SaldoInsuficienteException {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad a reintegrar debe ser positiva");
+        }
         if (cantidad > saldo) {
             throw new SaldoInsuficienteException("Saldo Insuficiente");
-        }
-        if (cantidad > 0) {
-            throw new IllegalArgumentException("La cantidad inicial debe ser positivo");
         }
 
         saldo -= cantidad;
         movimientos.add(new Movimiento(LocalDate.now(), 'R', -cantidad, saldo));
     }
+    
 
     public void realizarTransferencia(Cuenta destino, float cantidad) {
         // en caso de que la cuenta no exista
@@ -152,11 +154,6 @@ public class Cuenta implements Comparable {
 
     public int compareTo(Cuenta o) {
         return this.codigo.compareTo(o.codigo);
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
