@@ -1,29 +1,41 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.banco;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
  *
  * @author irene.rodrod.2
  */
-public class Cuenta {
+public class Cuenta implements Comparable {
+
     private String codigo;
     private String titular;
-    private float saldo;
+    float saldo;
+    List<Movimiento> movimientos;
 
     /*click derecho - insert code - constructor - hacer click y activar todas - finish */
-    public Cuenta(String codigo, String titular, float saldo) {
+ /*public class Cuenta implements Comparable{
         this.codigo = codigo;
         this.titular = titular;
         if(saldo>0) {
             this.saldo = saldo;
         }
+    }*/
+    public Cuenta(String codigo, String titular, float saldo) {
+        if (saldo > 0) {
+            throw new IllegalArgumentException("El saldo inicial debe ser positivo");
+        }
+
+        this.codigo = codigo;
+        this.titular = titular;
+        this.saldo = saldo;
+
+        movimientos = new ArrayList<>();
     }
-    
+
     /*MÉTODOS GET*/
     public String getCodigo() {
         return codigo;
@@ -37,6 +49,11 @@ public class Cuenta {
         return saldo;
     }
 
+    public List<Movimiento> getMovimientos() {
+        List<Movimiento> movimientos = null;
+        return movimientos;
+    }
+
     /*METODOS SET*/
     public void setCodigo(String codigo) {
         this.codigo = codigo;
@@ -47,21 +64,61 @@ public class Cuenta {
     }
 
     public void setSaldo(float saldo) {
-        if(saldo>0){
+        if (saldo > 0) {
             this.saldo = saldo;
         }
     }
-    
+
     public void ingresar(float cantidad) {
-        if(cantidad>0){
-            saldo+=cantidad; /*los atributos tienen otro color, y si se toca CTRL y se pone el ratón encima, lleva al enlace en el que se declaró la clase*/
+        if (cantidad > 0) {
+            saldo += cantidad;
+            /*los atributos tienen otro color, y si se toca CTRL y se pone el ratón encima, lleva al enlace en el que se declaró la clase*/
         }
     }
-    
-    public void reintegrar(float cantidad) {
-        if(cantidad>0 && cantidad<=saldo) {
-            saldo-=cantidad;
+
+    public void reintegrar(float cantidad) throws SaldoInsuficienteException {
+        if (cantidad > saldo) {
+            throw new SaldoInsuficienteException("Saldo Insuficiente");
         }
+        if (cantidad > 0) {
+            throw new IllegalArgumentException("La cantidad inicial debe ser positivo");
+        }
+
+        saldo -= cantidad;
+        movimientos.add(new Movimiento(LocalDate.now(), 'R', -cantidad, saldo));
+    }
+
+    public void realizarTransferencia(Cuenta destino, float cantidad) {
+        // en caso de que la cuenta no exista
+        if (destino == null) {
+            throw new NullPointerException(); //siempre que haya un throw, tiene que haber un try catch en el main
+        }
+        // en caso de que el destino sea el mismo
+        if (destino == this) {
+            throw new IllegalArgumentException("No se puede transferir a la misma cuenta");
+        }
+        // en caso de que la cantidad sea negativa
+        if (cantidad < 0) {
+            throw new IllegalArgumentException("La cantidad no puede ser negativa");
+        }
+        // en caso de que la cantidad a transferir sea mayor al saldo
+        if (cantidad > saldo) {
+            throw new IllegalArgumentException("Saldo insuficiente");
+        }
+        saldo -= cantidad;
+        movimientos.add(new Movimiento(LocalDate.now(), 'T', -cantidad, saldo));
+        destino.recibirTransferencia(this, cantidad);
+    }
+
+    public void recibirTransferencia(Cuenta origen, float cantidad) {
+        if (cantidad > 0) {
+            saldo += cantidad;
+            movimientos.add(new Movimiento(LocalDate.now(), 'I', cantidad, saldo));
+        }
+    }
+
+    public String listarMovimientos() {
+        return movimientos.toString();
     }
 
     /*OVERRIDE: significa que ya existía el codigo*/
@@ -92,5 +149,14 @@ public class Cuenta {
         final Cuenta other = (Cuenta) obj;
         return Objects.equals(this.codigo, other.codigo);
     }
-    
+
+    public int compareTo(Cuenta o) {
+        return this.codigo.compareTo(o.codigo);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }
