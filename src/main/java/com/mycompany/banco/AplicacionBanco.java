@@ -25,7 +25,7 @@ public class AplicacionBanco {
 
         Scanner teclado = new Scanner(System.in);
         banco = new Banco("Banco Sauces");
-        
+
         do {
             // Menú principal
             System.out.println("1- Abrir cuenta");
@@ -48,14 +48,20 @@ public class AplicacionBanco {
             switch (opcion) {
                 case 1 -> {
                     // Abrir cuenta
-                    System.out.print("Introducir el código de la cuenta: ");
-                    codigo = teclado.nextLine();
-                    System.out.print("Introducir el nombre del titular de la cuenta: ");
-                    titular = teclado.nextLine();
-
                     do {
                         error = false;
                         try {
+                            System.out.print("Introducir el código de la cuenta: ");
+                            codigo = teclado.nextLine();
+                            while (!Cuenta.esIbanValido(codigo)) { //controla q el IBAN este bien introducido
+                                System.out.println("Error en el IBAN.");
+                                System.out.print("Introducir el código de la cuenta: ");
+                                codigo = teclado.nextLine();
+                            }
+
+                            System.out.print("Introducir el nombre del titular de la cuenta: ");
+                            titular = teclado.nextLine();
+
                             System.out.print("Introduzca el saldo inicial de la cuenta: ");
                             saldo = teclado.nextFloat();
                             cuenta = new Cuenta(codigo, titular, saldo);
@@ -64,10 +70,10 @@ public class AplicacionBanco {
                             } else {
                                 System.out.println("No se puede abrir la cuenta. " + cuenta);
                             }
-                        } catch (IllegalArgumentException | InputMismatchException ime) {
-                            System.out.println("Entrada incorrecta: " + ime.getMessage());
+                        } catch (IllegalArgumentException | InputMismatchException ex) {
+                            System.out.println("Entrada incorrecta: " + ex.getMessage());
                             error = true;
-                        } 
+                        }
                     } while (error);
                 }
                 case 2 -> {
@@ -92,7 +98,8 @@ public class AplicacionBanco {
                                 teclado.nextLine(); // Limpiar el buffer
                                 opcion2 = 1000; // Valor no válido
                             }
-                            teclado.nextLine(); // Limpiar el buffer
+                            teclado.nextLine();
+
                             switch (opcion2) {
                                 case 1 -> {
                                     // Ingresar dinero
@@ -203,6 +210,5 @@ public class AplicacionBanco {
                 }
             }
         } while (opcion != 0);
-        teclado.close(); // Cerrar el Scanner al final
     }
 }
