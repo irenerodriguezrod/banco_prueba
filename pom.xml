@@ -11,4 +11,5 @@
         <maven.compiler.target>21</maven.compiler.target>
         <exec.mainClass>com.mycompany.banco.AplicacionBanco</exec.mainClass>
     </properties>
+    <name>Banco_Prueba</name>
 </project>

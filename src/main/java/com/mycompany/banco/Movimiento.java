@@ -1,5 +1,10 @@
 package com.mycompany.banco;
 
+/**
+ * La clase {@code Movimiento} modela los posibles movimientos que se pueden hacer con la clase {@code Cuenta}
+ * @author irene.rodrod.2
+ * @since 1.0
+ */
 import java.time.LocalDate;
 
 /**
@@ -26,6 +31,10 @@ public class Movimiento {
         this.tipo = tipo;
         this.cantidad = cantidad;
         this.saldo = saldo;
+    }
+
+    Movimiento(LocalDate now, TipoMovimiento tipoMovimiento, float f, float saldo) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public LocalDate getFecha() {
