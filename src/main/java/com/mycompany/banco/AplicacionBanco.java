@@ -11,12 +11,15 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class AplicacionBanco {
+/*Es el paquete al que pertenece la clase, el IDE lo hace automáticamente. */
 
-    private static final Logger logger = Logger.getLogger(AplicacionBanco.class.getName());
-
-    public static void main(String[] args) throws IOException {
-        Banco banco;
+/**
+ *
+ * @author irene.rodrod.2
+ */
+    public static void main(String[] args) {
         Cuenta cuenta = null;
+        Cuenta cuentaDestino = null;
         Cuenta cuentaDestino = null;
         String codigo, titular;
         float saldo = 0, cantidad = 0;
